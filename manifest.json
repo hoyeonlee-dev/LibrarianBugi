@@ -1,0 +1,20 @@
+{
+  "manifest_version": 3,
+  "name": "LibrarianBugi",
+  "version": "1.0",
+  "description": "인터넷 서점에 있는 서적이 한성대학교 도서관에 있는지 확인해 주는 간단한 브라우저 플러그인",
+  "background": {
+    "service_worker": "src/service-worker.js"
+  },
+  "content_scripts": [
+    {
+      "js": [
+        "dist/bundle.js"
+      ],
+      "matches": [
+        "https://product.kyobobook.co.kr/detail/*"
+      ]
+    }
+  ],
+  "host_permissions": ["https://hsel.hansung.ac.kr/*"]
+}

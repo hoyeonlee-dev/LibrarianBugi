@@ -1,0 +1,17 @@
+{
+  "strict": true,
+  "compilerOptions": {
+    "strict": true,
+    "moduleResolution": "node",
+    "allowSyntheticDefaultImports": true,
+    "target": "es6",
+    "module": "ES2015",
+    "esModuleInterop": true,
+    "jsx": "react",
+  },
+  "include": [
+    "./src/*",
+    "./src/*.ts",
+    "./src/*.tsx"
+  ]
+}

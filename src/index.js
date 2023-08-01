@@ -10,35 +10,32 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 import { getBookInfo, getRno, requestBookBorrowedInfo, requestBookSearchPage } from "./HansungLibrary";
 import { getSelector } from "./common";
 import jquery from 'jquery';
+import React from "react";
+import ReactDOM from "react-dom";
+import { App } from "./App";
 function index() {
+    const hostname = location.hostname;
     const selector = getSelector(location.hostname);
     console.log(`ISBN : ${selector.getISBN()}`);
+    let isbn = "";
     const findBookFromRemote = () => __awaiter(this, void 0, void 0, function* () {
         let resultDocument = yield requestBookSearchPage(selector.getISBN());
         if (resultDocument === undefined)
             return;
+        isbn = selector.getISBN();
         const rno = getRno(resultDocument);
         resultDocument = yield requestBookBorrowedInfo(rno);
         if (resultDocument === undefined)
             return;
-        const bookInfo = getBookInfo(resultDocument);
-        bookInfo.forEach((item) => console.log(item));
-        return bookInfo;
+        return getBookInfo(resultDocument);
     });
     findBookFromRemote().then((bookInfo) => {
+        if (location.hostname !== hostname)
+            return;
         if (bookInfo === undefined)
             return;
-        jquery('.btn_wrap.justify.overlap').after(`
-        <div class="prod_guide_wrap">
-            <div class="prod_guide_row">
-                <div class="prod_guide_title">도서관 보유 정보</div>
-                     <div class="prod_guide_cont">
-                            ${bookInfo.reduce((previousValue, currentValue) => previousValue + "\n" + currentValue)}
-                    </div>
-                </div>
-            </div>
-        </div>
-        `);
+        jquery('.prod_guide_wrap').append(String(`<div class="prod_guide_box"></div>`));
+        ReactDOM.render(React.createElement(App, { collectionInfo: bookInfo, isbn: isbn }), jquery('.prod_guide_box')[2]);
     });
 }
-index();
+jquery(() => index()); //document가 로딩된 이후에 요청을 실행함

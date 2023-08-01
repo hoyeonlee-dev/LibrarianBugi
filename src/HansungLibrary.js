@@ -8,6 +8,7 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 import { requestPageUsing } from "./common";
+import { Status } from "./types/status";
 const BASE_URL = "https://hsel.hansung.ac.kr/";
 const ISBN_LENGTH = 10;
 export function requestBookSearchPage(ISBN) {
@@ -40,10 +41,64 @@ export function getRno(document) {
         return rno;
 }
 export function getBookInfo(document) {
+    const tables = document.querySelectorAll(".table.table-condensed.table_data_view");
+    tables.forEach(item => {
+        console.log(tableToCurrentStatus(item));
+    });
     const texts = document.querySelectorAll(".text-center.hidden-xs.hidden-sm");
-    let ary = Array.from([]);
-    for (let i = 0; i < texts.length; i++) {
-        ary.push(texts.item(i));
+    //#\31 345189 > div > table > tbody > tr:nth-child(3)
+    const tableRows = [...document.querySelectorAll("div>table>tbody>tr")];
+    // let ary = Array.from<Element>([])
+    // for (let i = 0; i < texts.length; i++) {
+    //     ary.push(texts.item(i))
+    // }
+    // return ary.map(item => (item as HTMLTableCellElement).innerText.replace(/\t/g, "").replace(/\n/g, ""))
+    return tableRows.map(item => {
+        const cells = [...document.querySelectorAll(".text-center.hidden-xs.hidden-sm")].map(cell => {
+            const span = cell;
+            return span.innerText.replace(/\t/g, "").replace(/\n/g, "");
+        });
+        console.log(`cell:${cells}`);
+        return { location: cells[0], callNumber: cells[2], status: cells[3], dueDate: cells[4] };
+        // return cells.reduce((acc, item) => acc + " " + item);
+    });
+}
+function tableToCurrentStatus(element) {
+    if (element instanceof HTMLTableElement) {
+        let tds = [...element.querySelectorAll('td span')].map((item) => item);
+        //tds[0] as HTMLSpanElement
+        var status = Status.Unknown;
+        switch (tds[4].innerText) {
+            case Status.Available:
+                status = Status.Available;
+                break;
+            case Status.Reserved:
+                status = Status.Reserved;
+                break;
+            case Status.Borrowed:
+                status = Status.Borrowed;
+                break;
+            case Status.Unknown:
+                status = Status.Unknown;
+                break;
+            default:
+                status = Status.Unknown;
+                break;
+        }
+        console.log(tds);
+        return {
+            // @ts-ignore
+            id: Number(tds[0].innerText),
+            // @ts-ignore
+            location: tds[1].innerText,
+            // @ts-ignore
+            callNumber: tds[3].innerText,
+            // @ts-ignore
+            estimatedReturnDate: tds[5].innerText,
+            status: status
+        };
     }
-    return ary.map(item => item.innerText.replace(/\t/g, "").replace(/\n/g, ""));
+    else {
+        return undefined;
+    }
 }

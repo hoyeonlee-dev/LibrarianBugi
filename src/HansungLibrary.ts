@@ -1,6 +1,7 @@
 import {requestPageUsing} from "./common";
-import {CollectionInfo} from "./types/types";
+import {CollectionInfo} from "./types/CollectionInfo";
 import {Status} from "./types/status";
+import {CurrentBookStatus} from "./types/CurrentBookStatus";
 
 const BASE_URL = "https://hsel.hansung.ac.kr/"
 const ISBN_LENGTH = 10;
@@ -42,14 +43,7 @@ export function getBookInfo(document: Document): CollectionInfo[] {
     tables.forEach(item => {
         console.log(tableToCurrentStatus(item))
     })
-    const texts = document.querySelectorAll(".text-center.hidden-xs.hidden-sm")
-    //#\31 345189 > div > table > tbody > tr:nth-child(3)
     const tableRows = [...document.querySelectorAll("div>table>tbody>tr")]
-    // let ary = Array.from<Element>([])
-    // for (let i = 0; i < texts.length; i++) {
-    //     ary.push(texts.item(i))
-    // }
-    // return ary.map(item => (item as HTMLTableCellElement).innerText.replace(/\t/g, "").replace(/\n/g, ""))
     return tableRows.map(item => {
         const cells = [...document.querySelectorAll(".text-center.hidden-xs.hidden-sm")].map(cell => {
             const span = cell as HTMLSpanElement
@@ -57,21 +51,10 @@ export function getBookInfo(document: Document): CollectionInfo[] {
         })
         console.log(`cell:${cells}`)
         return {location: cells[0], callNumber: cells[2], status: cells[3], dueDate: cells[4]}
-        // return cells.reduce((acc, item) => acc + " " + item);
     })
-
-
 }
 
 
-
-export interface CurrentStatus {
-    id: number
-    callNumber: String
-    location: String
-    estimatedReturnDate: String
-    status: Status
-}
 
 function tableToCurrentStatus(element: Element) {
     if (element instanceof HTMLTableElement) {
@@ -95,14 +78,14 @@ function tableToCurrentStatus(element: Element) {
                 status = Status.Unknown
                 break;
         }
-        console.log(tds)
+        //console.log(tds)
         return {
             id: Number(tds[0].innerText),
             location: tds[1].innerText,
             callNumber: tds[3].innerText,
             estimatedReturnDate: tds[5].innerText,
             status: status
-        } as CurrentStatus
+        } as CurrentBookStatus
     } else {
         return undefined
     }

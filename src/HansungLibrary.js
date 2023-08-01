@@ -46,13 +46,7 @@ export function getBookInfo(document) {
         console.log(tableToCurrentStatus(item));
     });
     const texts = document.querySelectorAll(".text-center.hidden-xs.hidden-sm");
-    //#\31 345189 > div > table > tbody > tr:nth-child(3)
     const tableRows = [...document.querySelectorAll("div>table>tbody>tr")];
-    // let ary = Array.from<Element>([])
-    // for (let i = 0; i < texts.length; i++) {
-    //     ary.push(texts.item(i))
-    // }
-    // return ary.map(item => (item as HTMLTableCellElement).innerText.replace(/\t/g, "").replace(/\n/g, ""))
     return tableRows.map(item => {
         const cells = [...document.querySelectorAll(".text-center.hidden-xs.hidden-sm")].map(cell => {
             const span = cell;
@@ -60,7 +54,6 @@ export function getBookInfo(document) {
         });
         console.log(`cell:${cells}`);
         return { location: cells[0], callNumber: cells[2], status: cells[3], dueDate: cells[4] };
-        // return cells.reduce((acc, item) => acc + " " + item);
     });
 }
 function tableToCurrentStatus(element) {
@@ -85,15 +78,11 @@ function tableToCurrentStatus(element) {
                 status = Status.Unknown;
                 break;
         }
-        console.log(tds);
+        //console.log(tds)
         return {
-            // @ts-ignore
             id: Number(tds[0].innerText),
-            // @ts-ignore
             location: tds[1].innerText,
-            // @ts-ignore
             callNumber: tds[3].innerText,
-            // @ts-ignore
             estimatedReturnDate: tds[5].innerText,
             status: status
         };

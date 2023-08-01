@@ -1,6 +1,5 @@
 import React from 'react';
-import {CollectionInfo} from "./types/types";
-import {getStatusWith, Status} from "./types/status";
+import {CollectionInfo} from "./types/CollectionInfo";
 
 interface props {
     collectionInfo: CollectionInfo[];
@@ -15,7 +14,7 @@ export const App: React.FC<props> = (props) => {
             <div className="prod_guide_title">도서관 보유 정보<br/><br/>{`총 ${props.collectionInfo.length}권`}</div>
             <div className="prod_guide_cont">
                 <table>
-                    {props.collectionInfo.map((item: CollectionInfo, idx) => {
+                    {props.collectionInfo.map((item: CollectionInfo) => {
                         item.status
                         let status = item.status.includes("대출가능")
                         console.log(status)
